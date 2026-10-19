@@ -2,6 +2,26 @@
 
 한국어 관리자 화면에서 여성의류 상품 정보와 사진을 입력하면 소개 문구, 세로형 상세페이지와 PNG 이미지를 생성합니다. 외부 API 키나 패키지 설치 없이 동작합니다.
 
+## 설치 없이 크롬에서 사용하기: 무료 GitHub Pages
+
+이 프로그램의 `public/` 폴더는 정적 웹사이트로 배포할 수 있습니다. 호스팅 서버에서는 Node.js가 필요 없고, 사용자의 PC에도 설치할 프로그램이 없습니다. 사진과 상품 정보는 사용자 브라우저에서만 처리합니다.
+
+저장소 소유자가 한 번 설정하세요.
+
+1. [저장소 Pages 설정](https://github.com/worldmaker009-png/yeppeuotte-detail-page/settings/pages)을 엽니다.
+2. **Build and deployment → Source**에서 **GitHub Actions**를 선택합니다.
+3. [배포 워크플로](https://github.com/worldmaker009-png/yeppeuotte-detail-page/actions/workflows/deploy-pages.yml)에서 **Run workflow → main → Run workflow**를 누릅니다. `main`에 코드를 푸시할 때도 자동 배포됩니다.
+4. 실행이 초록색으로 완료되면 실행 결과의 `github-pages` 배포 링크를 엽니다.
+
+기본 HTTPS 주소는 **https://worldmaker009-png.github.io/yeppeuotte-detail-page/** 입니다. Pages 활성화 및 첫 배포 성공 전에는 접속되지 않습니다. 사용자 또는 조직에서 사용자 지정 도메인을 설정했다면 워크플로에 표시되는 실제 주소를 사용하세요.
+
+- Source 선택이 안 보이면 저장소 관리자 권한과 계정의 Pages 지원 여부를 확인하세요. 무료 계정은 일반적으로 공개 저장소에서 Pages를 사용할 수 있습니다. 비공개 저장소를 임의로 공개하지 말고, 비공개를 유지해야 한다면 해당 계정 요금제 지원 여부를 확인하세요.
+- `Get Pages site failed` 또는 Pages 관련 404로 배포가 실패하면 위 Source 설정 후 워크플로를 다시 실행하세요.
+- Actions가 비활성화되어 있으면 저장소 Settings → Actions에서 GitHub Actions 사용을 허용해야 합니다.
+- `public/` 폴더만 게시하며 `server.js`, 테스트, 저장소 설정은 배포하지 않습니다. API 키나 별도 호스팅 계정은 필요 없습니다.
+- 웹사이트 자체에 관리자 로그인은 없습니다. 공개 주소에 접속한 누구나 도구를 사용할 수 있지만 각자의 사진·입력은 서로 공유되지 않습니다. 입력값은 새로고침 시 사라집니다.
+- `.github/workflows/deploy-pages.yml`이 테스트와 배포를 수행합니다. `public/.nojekyll` 및 상대경로 자산 참조를 포함해 저장소 하위 주소에서도 동작합니다.
+
 ## 실행 방법
 
 Node.js 20 이상이 필요합니다. 저장소 폴더에서 실행하세요.

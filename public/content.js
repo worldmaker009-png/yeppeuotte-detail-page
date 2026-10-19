@@ -1,6 +1,7 @@
 export function makeCopy(product) {
   const colors = product.colors.trim() || '상품 사진 참고';
-  return `일상에 자연스럽게 스며드는 ${product.name}.\n${product.material} 소재의 매력을 담아 나만의 스타일을 완성해 보세요.\n${colors} 컬러로 다양한 데일리 룩에 함께하기 좋은 아이템입니다.`;
+  const material = product.material?.trim() ? `입력된 소재 정보는 ${product.material}입니다.\n` : '';
+  return `일상에 자연스럽게 스며드는 ${product.name}.\n${material}${colors} 컬러로 나만의 데일리 룩을 완성해 보세요.`;
 }
 export function priceLabel(price) {
   return `${new Intl.NumberFormat('ko-KR').format(Number(price))}원`;

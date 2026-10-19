@@ -1,0 +1,26 @@
+name = "yeppeuotte-ai-api"
+main = "src/worker.js"
+compatibility_date = "2026-01-01"
+workers_dev = true
+
+[vars]
+ALLOWED_ORIGIN = "https://worldmaker009-png.github.io"
+OPENAI_MODEL = "gpt-4.1-mini"
+DAILY_GENERATION_LIMIT = "30"
+IMAGE_MODEL = "gpt-image-1.5"
+IMAGE_DAILY_LIMIT = "12"
+# Editable budgeting examples in USD, not provider quotes or measured charges.
+IMAGE_ESTIMATE_USD = "0.25"
+TEXT_ESTIMATE_USD = "0.03"
+
+[[durable_objects.bindings]]
+name = "RATE_LIMITER"
+class_name = "GenerationLimiter"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["GenerationLimiter"]
+
+# OPENAI_API_KEY and ADMIN_TOKEN are Worker secrets, never vars here.
+# wrangler secret put OPENAI_API_KEY
+# wrangler secret put ADMIN_TOKEN

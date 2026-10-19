@@ -29,6 +29,10 @@ jobs:
           node-version: '24'
       - name: Test
         run: npm test
+      - name: Set public AI backend address
+        env:
+          AI_API_URL: ${{ vars.YEPPEUOTTE_AI_API_URL }}
+        run: node scripts/configure-public-api.mjs
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload static site

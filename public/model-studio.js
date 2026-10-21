@@ -87,7 +87,6 @@ export function createModelStudio({ getPhotos, isBusy, setBusy, health, onChange
     if (!token) { status.textContent = '관리자 접속 암호가 필요합니다. OpenAI 키를 브라우저에 입력하지 마세요.'; return; }
     if (singleView && singleView !== 'front' && !anchor) { status.textContent = '먼저 정면 모델 컷을 생성해 인물 참조 기준을 만들어 주세요.'; return; }
     const background = $('#model-background').value;
-    const shootingStyle = $('model-shooting-style').value;
     const count = Number($('#model-count').value);
     const views = singleView ? [singleView] : count === 1 ? ['front'] : count === 2 ? ['front', 'upper'] : ['front', 'side', 'full', 'upper'];
     const shootingStyle = $('#model-shooting-style').value;stopRequested = false; $('#model-generate').dataset.running = 'true'; setBusy(true); $('#ai-progress').hidden = false;

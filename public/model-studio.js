@@ -87,9 +87,10 @@ export function createModelStudio({ getPhotos, isBusy, setBusy, health, onChange
     if (!token) { status.textContent = '관리자 접속 암호가 필요합니다. OpenAI 키를 브라우저에 입력하지 마세요.'; return; }
     if (singleView && singleView !== 'front' && !anchor) { status.textContent = '먼저 정면 모델 컷을 생성해 인물 참조 기준을 만들어 주세요.'; return; }
     const background = $('#model-background').value;
+    const shootingStyle = $('model-shooting-style').value;
     const count = Number($('#model-count').value);
     const views = singleView ? [singleView] : count === 1 ? ['front'] : count === 2 ? ['front', 'upper'] : ['front', 'side', 'full', 'upper'];
-    stopRequested = false; $('#model-generate').dataset.running = 'true'; setBusy(true); $('#ai-progress').hidden = false;
+    const shootingStyle = $('#model-shooting-style').value;stopRequested = false; $('#model-generate').dataset.running = 'true'; setBusy(true); $('#ai-progress').hidden = false;
     let completed = 0;
     try {
       status.textContent = '백엔드와 이미지 생성 설정 확인 중…'; const base = await health();
@@ -107,7 +108,7 @@ export function createModelStudio({ getPhotos, isBusy, setBusy, health, onChange
         status.textContent = `모델 사진 생성 중 ${i + 1}/${views.length} · ${labels[view]} (컷당 수 분이 걸릴 수 있습니다)…`;
         const identity = anchor ? await analysisPhoto(anchor.image) : undefined;
         attempts++; estimate();
-        const data = await apiRequest(base, '/model-image', { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ images, view, background, ...(identity ? { identity } : {}) }) });
+        const data = await apiRequest(base, '/model-image', { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ images, view, background,shootingStyle, ...(identity ? { identity } : {}) }) });
         if (data.view !== view) throw new Error('요청한 구도와 응답이 일치하지 않습니다.');
         const p = await resultPhoto(data);
         if (!anchor) anchor = p;

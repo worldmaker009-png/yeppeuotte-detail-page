@@ -33,7 +33,12 @@
           <div class="model-settings">
             <h3>마네킹 → 가상 여성 모델</h3>
             <p>성인 가상 모델의 실사 컷과 상품 문구를 함께 생성합니다. 첫 정면 컷을 다음 구도의 인물 참조로 사용합니다. 얼굴·체형·의류의 완전한 일치는 보장하지 않습니다.</p>
-            <div class="row"><label>생성 구도<select id="model-count"><option value="4">4장 · 정면/측면/전신/상반신</option><option value="2">2장 · 정면/상반신</option><option value="1">1장 · 정면</option></select></label><label>모델 배경<select id="model-background"><option value="ivory">웜 아이보리</option><option value="white">화이트</option><option value="gray">라이트 그레이</option></select></label></div>
+            <div class="row"><label>생성 구도<select id="model-count"><option value="4">4장 · 정면/측면/전신/상반신</option><option value="2">2장 · 정면/상반신</option><option value="1">1장 · 정면</option></select></label><label>촬영 스타일
+  <select id="model-shooting-style">
+    <option value="studio">일반 쇼핑몰 촬영</option>
+    <option value="mirror-selfie">아이폰 거울 셀카 얼굴 가림</option>
+  </select>
+</label><label>모델 배경<select id="model-background"><option value="ivory">웜 아이보리</option><option value="white">화이트</option><option value="gray">라이트 그레이</option><option value="bright-showroom">밝은 쇼룸</option></select></label></div>
             <details><summary>예상 비용 단가 설정 · USD</summary><label>이미지 1장당 예산 가정<input id="image-unit-cost" type="number" min="0" max="100" step="0.01" value="0.25"></label><label>텍스트 1회당 예산 가정<input id="text-unit-cost" type="number" min="0" max="100" step="0.01" value="0.03"></label><small>초깃값은 예산 계산용 예시이며 현재 공급자 가격이나 실제 청구액이 아닙니다. 최신 단가와 입력 이미지 비용에 맞춰 조정하세요.</small></details>
             <p id="model-cost" role="status"></p>
             <label class="consent"><input id="ai-disclosure" type="checkbox" checked>상세페이지와 모델 사진 저장 시 AI 가상 모델 표시</label>

@@ -21,6 +21,7 @@
 1. [COMMON_RULES.md](./COMMON_RULES.md) — 공통 원칙
 2. [README.md](./README.md) — 프로젝트 전체 구조와 기능
 3. [docs/AI_SETUP.md](./docs/AI_SETUP.md) — AI/배포 설정 (설정 작업 시)
+4. [HANDOVER.md](./HANDOVER.md) — 최신 진행 상황과 다음 할 일 확인
 
 ## 작업을 마치면
 `HANDOVER.md`(인수인계 문서)에 이번 작업의 목표·담당 AI·진행 상태·수정 파일·검증 결과·다음 할 일을 기록해 다음 작업자(사람 또는 AI)가 이어받을 수 있게 해 주세요.

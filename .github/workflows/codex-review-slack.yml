@@ -12,9 +12,7 @@ permissions:
   contents: read
   issues: read
   pull-requests: read
-concurrency:
-  group: slack-review-${{ github.event.issue.number || github.event.inputs.pr_number }}
-  cancel-in-progress: false
+# Keep each completion event independent so later edits cannot replace pending reports.
 jobs:
   report:
     if: >-

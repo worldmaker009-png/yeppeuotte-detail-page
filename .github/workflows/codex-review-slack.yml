@@ -1,0 +1,115 @@
+name: Report Codex review to Slack
+on:
+  issue_comment:
+    types: [created, edited]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: '완료된 Codex 검토를 보고할 PR 번호'
+        required: true
+        type: string
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+concurrency:
+  group: slack-review-${{ github.event.issue.number || github.event.inputs.pr_number }}
+  cancel-in-progress: false
+jobs:
+  report:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.issue.pull_request &&
+       github.event.comment.user.login == 'chatgpt-codex-connector[bot]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Send completed review
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SLACK_REVIEW_WEBHOOK_URL: ${{ secrets.SLACK_REVIEW_WEBHOOK_URL }}
+        shell: python
+        run: |
+          import json, os, re, urllib.request, urllib.error
+          from urllib.parse import urlparse
+          
+          BOT = "chatgpt-codex-connector[bot]"
+          def state(body):
+              match = re.search(r"<!-- codex-review-state:v1 (.*?) -->", body or "", re.S)
+              if not match:
+                  return None
+              try:
+                  review = json.loads(match.group(1)).get("code_review", {})
+              except (ValueError, AttributeError):
+                  return None
+              if (review.get("status") != "completed"
+                  or not re.fullmatch(r"[0-9a-f]{40}", str(review.get("commit_sha", "")))
+                  or type(review.get("has_any_findings")) is not bool):
+                  return None
+              return review
+          
+          def api(path):
+              req = urllib.request.Request("https://api.github.com/repos/" + os.environ["GITHUB_REPOSITORY"] + path,
+                  headers={"Authorization": "Bearer " + os.environ["GH_TOKEN"], "Accept": "application/vnd.github+json"})
+              with urllib.request.urlopen(req, timeout=20) as response:
+                  return json.load(response)
+          
+          def main():
+              with open(os.environ["GITHUB_EVENT_PATH"]) as source:
+                  event = json.load(source)
+              manual = os.environ["GITHUB_EVENT_NAME"] == "workflow_dispatch"
+              if manual:
+                  number = str(event.get("inputs", {}).get("pr_number", ""))
+                  if not re.fullmatch(r"[1-9][0-9]*", number):
+                      raise RuntimeError("유효한 PR 번호가 필요합니다.")
+                  comments = []
+                  page = 1
+                  while True:
+                      batch = api("/issues/" + number + "/comments?per_page=100&page=" + str(page))
+                      comments.extend(batch)
+                      if len(batch) < 100:
+                          break
+                      page += 1
+                  matches = [c for c in comments if c["user"]["login"] == BOT and state(c.get("body"))]
+                  if not matches:
+                      raise RuntimeError("완료된 Codex 검토 상태가 없습니다.")
+                  comment = max(matches, key=lambda c: c["updated_at"])
+              else:
+                  comment = event.get("comment", {})
+                  if not event.get("issue", {}).get("pull_request") or comment.get("user", {}).get("login") != BOT:
+                      return
+                  number = str(event["issue"]["number"])
+              review = state(comment.get("body"))
+              if not review:
+                  return
+              # Ignore unrelated edits to an already completed summary.
+              before = state(event.get("changes", {}).get("body", {}).get("from"))
+              if not manual and before == review:
+                  return
+              pr = api("/pulls/" + number)
+              if review["commit_sha"] != pr["head"]["sha"]:
+                  print("Skip stale review for an older commit.")
+                  return
+              webhook = os.environ.get("SLACK_REVIEW_WEBHOOK_URL", "")
+              parsed = urlparse(webhook)
+              if parsed.scheme != "https" or parsed.netloc != "hooks.slack.com" or not parsed.path.startswith("/services/"):
+                  raise RuntimeError("SLACK_REVIEW_WEBHOOK_URL Secret을 확인하세요.")
+              result = "수정 검토 필요" if review["has_any_findings"] else "지적 사항 없음"
+              text = ("예쁘오뜨 Codex 검토 완료\nPR #" + number + "\n커밋: " + review["commit_sha"][:7]
+                  + "\n결과: " + result + "\n" + pr["html_url"]
+                  + "\n검토 상세: " + comment["html_url"]
+                  + "\n최종 병합은 사용자 승인 후 진행합니다. 이 알림은 자동 수정이나 병합을 실행하지 않습니다.")
+              payload = json.dumps({"text": text, "unfurl_links": False, "unfurl_media": False}).encode()
+              request = urllib.request.Request(webhook, data=payload, headers={"Content-Type": "application/json"}, method="POST")
+              try:
+                  with urllib.request.urlopen(request, timeout=20) as response:
+                      if response.status != 200 or response.read().decode().strip() != "ok":
+                          raise RuntimeError("Slack 응답이 성공이 아닙니다.")
+              except (urllib.error.URLError, TimeoutError):
+                  # Do not log secret webhook URLs or automatically retry ambiguous deliveries.
+                  raise RuntimeError("Slack 전송 실패. Actions 로그와 채널을 확인한 뒤 수동 재실행하세요.") from None
+              print("Slack report delivered.")
+          
+          if __name__ == "__main__":
+              main()
+          

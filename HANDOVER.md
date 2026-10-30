@@ -25,6 +25,14 @@
 - 검증 결과: `git diff`로 `AGENTS.md`·`HANDOVER.md`만 변경됨을 확인. 기능 코드(`public/`, `backend/`, `server.js`)와 배포 설정(`.github/`, `wrangler.toml`)은 변경·삭제 없음.
 - 다음 할 일: PR 리뷰 후 main 병합 여부는 사용자가 결정
 
+### 2026-10-30 Codex 검토 Slack 보고 준비
+- 작업 목표: Codex 검토 완료를 Slack에 자동 보고
+- 담당 AI: Codex
+- 진행 상태: 구현·로컬 검증 완료, Secret 등록·사용자 병합·실전 검증 대기
+- 수정 파일: `.github/workflows/codex-review-slack.yml`, `docs/COLLABORATION_SETUP.md`, `HANDOVER.md`
+- 검증 결과: Python 구문 및 상태 파싱·오래된 커밋 생략·동일 상태 수정 생략·Slack 성공 응답 모의 검증 통과. 실제 Webhook 미등록으로 실전 전송 미검증. 기능 코드와 기존 배포 workflow 변경 없음.
+- 다음 할 일: Slack Webhook Secret 등록, 사용자 승인 병합, PR #2 수동 보고 및 새 PR 자동 보고 확인. 자동 수정 왕복 2회 제한은 별도 구축.
+
 ### 2026-10-29 코덱스 협업 기본 문서 정리
 - 작업 목표: 코덱스와 협업하기 위한 기본 문서(공통 원칙·에이전트 안내·인수인계) 정리
 - 담당 AI: Claude Code

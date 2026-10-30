@@ -17,6 +17,14 @@
 
 ## 작업 기록
 
+### 2026-10-30 Claude 자동 수정 2회 제한 구현
+- 목표: Codex 지적 → Claude 수정 → 재검토 요청 자동화
+- 담당: Codex
+- 상태: 코드 및 모의 검증 완료, 인증·사용자 병합·활성화·실전 검증 대기
+- 수정 파일: `.github/workflows/claude-auto-fix.yml`, `scripts/auto-fix-guard.cjs`, `scripts/auto-fix-guard.test.cjs`, `docs/CLAUDE_AUTO_FIX.md`, `HANDOVER.md`
+- 검증: 상태/작성자/동일 저장소/SHA/중복/2회 한도/예약 충돌 등 10개 테스트 및 YAML 파싱 통과. Slack 기존 수동 실행은 15:35 채널 도착 확인. 실제 Claude 실행과 자동 재검토는 미검증.
+- 다음: Claude GitHub 앱·OAuth Secret 연결, 검토 후 사용자 병합, 활성화 변수 설정, 실제 왕복 시험. 자동 병합 없음.
+
 ### 2026-10-30 Codex 검토 Slack 보고 준비
 - 작업 목표: Codex 검토 완료를 Slack에 자동 보고
 - 담당 AI: Codex
